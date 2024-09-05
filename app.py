@@ -4,7 +4,6 @@ import socketio
 import threading
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
 from sqlalchemy import JSON, UniqueConstraint
 import time
 
@@ -12,7 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-CORS(app)
+
 sio = socketio.Client()
 
 # Define your Listing model with a unique constraint for steamid and market_name
@@ -105,7 +104,7 @@ def delete_data_every_2_minutes():
 # Start the WebSocket client and connect
 def run_websocket_client():
     try:
-        sio.connect('ws://skinport.com', transports=['websocket'])  # Replace with your WebSocket URL
+        sio.connect('wss://skinport.com', transports=['websocket'])  # Replace with your WebSocket URL
         sio.emit('saleFeedJoin', {'currency': 'EUR', 'locale': 'en', 'appid': 730})
     except Exception as e:
         print(f"WebSocket error: {e}")
