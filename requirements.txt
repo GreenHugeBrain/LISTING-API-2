@@ -1,6 +1,6 @@
 Flask
 Flask-SQLAlchemy
-SQLAlchemy
+Flask-CORS
 socketio
 requests
 gunicorn
