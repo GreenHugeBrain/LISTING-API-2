@@ -43,7 +43,7 @@ def saleFeed(data):
     print(f"Received sale feed data: {data}")
     
     # Forward the data to the /saleFeed endpoint
-    response = requests.post('https://listing-api-2.onrender.com/saleFeed', json=data)
+    response = requests.post('http://127.0.0.1:5000/saleFeed', json=data)
     print(f"Data posted to Flask app: {response.status_code}")
 
 @sio.event
@@ -78,7 +78,7 @@ def handle_sale_feed():
 
 # Route to display all listings
 @app.route('/', methods=['GET'])
-def displayAllData():
+def display_all_data():
     try:
         listings = Listing.query.all()
         result = [{'id': listing.id, 'steamid': listing.steamid, 'market_name': listing.market_name, 'wear': listing.wear, 'sale_price': listing.sale_price, 'additional_data': listing.additional_data} for listing in listings]
@@ -103,18 +103,17 @@ def delete_data_every_2_minutes():
 # Start the WebSocket client and connect
 def run_websocket_client():
     try:
-        sio.connect('wss://skinport.com/socket', transports=['websocket'])  # შეცვალე URL და ჩაერთე სწორი endpoint
+        sio.connect('wss://skinport.com', transports=['websocket'])  # Replace with your WebSocket URL
         sio.emit('saleFeedJoin', {'currency': 'EUR', 'locale': 'en', 'appid': 730})
     except Exception as e:
         print(f"WebSocket error: {e}")
 
-
 if __name__ == "__main__":
+    # Start the WebSocket client and data deletion in separate threads
     websocket_thread = threading.Thread(target=run_websocket_client)
     websocket_thread.start()
 
-    # Start the periodic data deletion in a separate thread
     deletion_thread = threading.Thread(target=delete_data_every_2_minutes)
     deletion_thread.start()
 
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0', port=5000)
