@@ -5,25 +5,22 @@ import threading
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import JSON, UniqueConstraint
-from flask_cors import CORS
 import time
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-CORS(app)
 
 sio = socketio.Client()
 
-# Define your Listing model with a unique constraint for steamid and market_name
 class Listing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     steamid = db.Column(db.String(20), nullable=False)
     market_name = db.Column(db.String(100), nullable=False)
     wear = db.Column(db.Float)
     sale_price = db.Column(db.Float)
-    additional_data = db.Column(JSON)  # JSON column for additional data
+    additional_data = db.Column(JSON)
 
     __table_args__ = (
         UniqueConstraint('steamid', 'market_name', name='unique_steamid_market_name'),
@@ -46,11 +43,8 @@ def saleFeed(data):
     print(f"Received sale feed data: {data}")
     
     # Forward the data to the /saleFeed endpoint
-    try:
-        response = requests.post('http://localhost:10000/saleFeed', json=data)  # Ensure the URL is correct
-        print(f"Data posted to Flask app: {response.status_code}")
-    except requests.RequestException as e:
-        print(f"Error posting data to Flask app: {e}")
+    response = requests.post('http://listing-api-2.onrender.com/saleFeed', json=data)
+    print(f"Data posted to Flask app: {response.status_code}")
 
 @sio.event
 def disconnect():
@@ -109,7 +103,7 @@ def delete_data_every_2_minutes():
 # Start the WebSocket client and connect
 def run_websocket_client():
     try:
-        sio.connect('wss://skinport.com/socket.io/?EIO=3&transport=websocket')  # Replace with your WebSocket URL
+        sio.connect('https://skinport.com', transports=['websocket'])  # Replace with your WebSocket URL
         sio.emit('saleFeedJoin', {'currency': 'EUR', 'locale': 'en', 'appid': 730})
     except Exception as e:
         print(f"WebSocket error: {e}")
@@ -122,4 +116,4 @@ if __name__ == "__main__":
     deletion_thread = threading.Thread(target=delete_data_every_2_minutes)
     deletion_thread.start()
 
-    app.run(debug=True, port=10000)
+    app.run(debug=True)
