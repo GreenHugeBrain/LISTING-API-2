@@ -4,3 +4,4 @@ requests==2.27.1
 python-socketio==5.7.2
 Flask-CORS
 gunicorn==20.1.0
+werkzeug==2.1.2  # Specify a compatible werkzeug version
