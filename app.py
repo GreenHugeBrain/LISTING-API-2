@@ -46,8 +46,11 @@ def saleFeed(data):
     print(f"Received sale feed data: {data}")
     
     # Forward the data to the /saleFeed endpoint
-    response = requests.post('wss://listing-api-2.onrender.com/saleFeed', json=data)
-    print(f"Data posted to Flask app: {response.status_code}")
+    try:
+        response = requests.post('http://localhost:10000/saleFeed', json=data)  # Ensure the URL is correct
+        print(f"Data posted to Flask app: {response.status_code}")
+    except requests.RequestException as e:
+        print(f"Error posting data to Flask app: {e}")
 
 @sio.event
 def disconnect():
@@ -106,7 +109,7 @@ def delete_data_every_2_minutes():
 # Start the WebSocket client and connect
 def run_websocket_client():
     try:
-        sio.connect('https://skinport.com', transports=['websocket'])  # Replace with your WebSocket URL
+        sio.connect('wss://skinport.com/socket.io/?EIO=3&transport=websocket')  # Replace with your WebSocket URL
         sio.emit('saleFeedJoin', {'currency': 'EUR', 'locale': 'en', 'appid': 730})
     except Exception as e:
         print(f"WebSocket error: {e}")
