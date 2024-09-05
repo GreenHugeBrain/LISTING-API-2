@@ -46,7 +46,7 @@ def saleFeed(data):
     print(f"Received sale feed data: {data}")
     
     # Forward the data to the /saleFeed endpoint
-    response = requests.post('https://listing-api-2.onrender.com/saleFeed', json=data)
+    response = requests.post('wss://listing-api-2.onrender.com/saleFeed', json=data)
     print(f"Data posted to Flask app: {response.status_code}")
 
 @sio.event
