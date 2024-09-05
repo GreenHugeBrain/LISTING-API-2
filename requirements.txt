@@ -3,3 +3,4 @@ Flask-SQLAlchemy
 SQLAlchemy
 python-socketio
 requests
+gunicorn
