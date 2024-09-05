@@ -1,7 +1,6 @@
-Flask
-Flask-SQLAlchemy
-SQLAlchemy
-python-socketio
-requests
+Flask==2.0.3
+Flask-SQLAlchemy==2.5.1
+requests==2.27.1
+python-socketio==5.7.2
 Flask-CORS
-gunicorn
+gunicorn==20.1.0
