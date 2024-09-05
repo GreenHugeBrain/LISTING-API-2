@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 SQLAlchemy
 gunicorn
+Flask-CORS
